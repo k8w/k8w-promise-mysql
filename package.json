@@ -1,6 +1,6 @@
 {
   "name": "k8w-promise-mysql",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple native Promise wrapper for mysqljs/mysql",
   "main": "index.js",
   "scripts": {
@@ -26,9 +26,7 @@
   "homepage": "https://github.com/k8w/k8w-promise-mysql#readme",
   "typings": "index.d.ts",
   "dependencies": {
+    "@types/mysql": "^2.15.2",
     "mysql": "^2.15.0"
-  },
-  "devDependencies": {
-    "@types/mysql": "^2.15.2"
   }
 }
