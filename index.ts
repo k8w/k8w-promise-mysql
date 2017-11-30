@@ -11,17 +11,6 @@ export default class PromiseMySQL {
     static raw = mysql.raw;
 }
 
-export interface QueryResult {
-    results: any;
-    fields: mysql.FieldInfo[];
-}
-
-export interface QueryFunction {
-    (query: mysql.Query | string | mysql.QueryOptions): Promise<QueryResult>;
-
-    (options: string, values: any): Promise<QueryResult>;
-}
-
 export class PromiseMySQLPool {
     private _pool: mysql.Pool;
 
@@ -30,13 +19,19 @@ export class PromiseMySQLPool {
         this.on = pool.on.bind(this._pool);
     }
 
-    query: QueryFunction = () => {
+    query(query: mysql.Query | string | mysql.QueryOptions, values?: any): Promise<{
+        results: any;
+        fields: mysql.FieldInfo[];
+    }> {
         let args: any[] = [];
-        for (let i = 0; i < arguments.length; ++i){
+        for (let i = 0; i < arguments.length; ++i) {
             args.push(arguments[i]);
         }
 
-        return new Promise<QueryResult>((rs, rj) => {
+        return new Promise<{
+            results: any;
+            fields: mysql.FieldInfo[];
+        }>((rs, rj) => {
             args.push((err: mysql.MysqlError | null, results: any, fields: mysql.FieldInfo[]) => {
                 if (err) {
                     rj(err)
@@ -53,7 +48,21 @@ export class PromiseMySQLPool {
         });
     }
 
-    async end(): Promise<void>{
+    select: <T=any>(query: mysql.Query | string | mysql.QueryOptions, values?: any) => Promise<{
+        results: T[];
+        fields: mysql.FieldInfo[];
+    }> = this.query;
+    insert: (query: mysql.Query | string | mysql.QueryOptions, values?: any) => Promise<{
+        results: { affectedRows: number, insertId: number }
+    }> = this.query;
+    update: (query: mysql.Query | string | mysql.QueryOptions, values?: any) => Promise<{
+        results: { changedRows: number }
+    }> = this.query;
+    delete: (query: mysql.Query | string | mysql.QueryOptions, values?: any) => Promise<{
+        results: { affectedRows: number }
+    }> = this.query;
+
+    async end(): Promise<void> {
         return new Promise<void>((rs, rj) => {
             this._pool.end(err => {
                 if (err) {
