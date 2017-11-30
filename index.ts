@@ -19,7 +19,7 @@ export class PromiseMySQLPool {
         this.on = pool.on.bind(this._pool);
     }
 
-    query(query: mysql.Query | string | mysql.QueryOptions, values?: any): Promise<{
+    query(): Promise<{
         results: any;
         fields: mysql.FieldInfo[];
     }> {
@@ -44,7 +44,7 @@ export class PromiseMySQLPool {
                 }
             });
 
-            this._pool.query.apply(this._pool, arguments)
+            this._pool.query.apply(this._pool, args)
         });
     }
 
