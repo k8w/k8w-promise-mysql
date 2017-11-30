@@ -27,6 +27,7 @@ export class PromiseMySQLPool {
 
     constructor(pool: mysql.Pool) {
         this._pool = pool;
+        this.on = pool.on.bind(this._pool);
     }
 
     query: QueryFunction = () => {
@@ -65,5 +66,5 @@ export class PromiseMySQLPool {
         })
     }
 
-    on: mysql.Pool['on'] = this._pool.on.bind(this._pool);
+    on: mysql.Pool['on'];
 }
