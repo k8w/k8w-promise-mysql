@@ -19,7 +19,7 @@ export class PromiseMySQLPool {
         this.on = pool.on.bind(this._pool);
     }
 
-    query(): Promise<{
+    query(query: mysql.Query | string | mysql.QueryOptions, values?: any): Promise<{
         results: any;
         fields: mysql.FieldInfo[];
     }> {

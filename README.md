@@ -3,6 +3,9 @@ k8w-promise-mysql
 
 Simple native Promise wrapper for mysqljs/mysql
 
+The same with https://github.com/mysqljs/mysql
+But is Promise version
+
 ### Usage
 
 ```ts
@@ -18,7 +21,8 @@ async function main(){
     });
 
     let { results, fields } = await pool.query('SELECT 1 + 1 AS solution');
-    console.log(fields[0] + ' is ' + results[0].solution);
+    let { results, fields } = await pool.query('SELECT * FROM test WHERE a=? AND b=?', ['aaa', 'bbb']);
+    let { results, fields } = await pool.select('SELECT * FROM test WHERE a=? AND b=?', ['aaa', 'bbb']);
 }
 
 main();
