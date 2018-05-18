@@ -4,7 +4,7 @@
   "description": "Simple native Promise wrapper for mysqljs/mysql",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha test/**/*.test.ts",
     "build": "rm -rf dist && tsc -d && cp package.json LICENSE README.md dist/"
   },
   "repository": {
@@ -28,5 +28,11 @@
   "dependencies": {
     "@types/mysql": "^2.15.2",
     "mysql": "^2.15.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.0",
+    "mocha": "^5.1.1",
+    "ts-node": "^6.0.3",
+    "typescript": "^2.8.3"
   }
 }
