@@ -1,79 +1,35 @@
 import * as mysql from 'mysql';
+import PromiseMySQLPool from './src/PromiseMySQLPool';
+import PromiseMyCluster from './src/PromiseMyCluster';
+import MyClusterConfig from './src/MyClusterConfig';
 
 export default class PromiseMySQL {
     static createPool(config: mysql.PoolConfig | string): PromiseMySQLPool {
         return new PromiseMySQLPool(mysql.createPool(config));
     }
 
+    static createCluster(config: MyClusterConfig): PromiseMyCluster {
+        let poolCluster = mysql.createPoolCluster(config.options);
+
+        let i: number;
+        for (i = 0; i < config.master.length; i++) {
+            if (i == 0) {
+                poolCluster.add('MASTER', config.master[i]);
+            } else {
+                poolCluster.add(`MASTER${i}`, config.master[i]);
+            }
+        }
+        if (config.slave) { 
+            for (i = 0; i < config.slave.length; i++) {
+                poolCluster.add(`SLAVE${i+1}`, config.slave[i]);
+            }
+        }    
+        poolCluster.getConnection(function (err, connection) { });
+        return new PromiseMyCluster(poolCluster);
+    }
+
     static escape = mysql.escape;
     static escapeId = mysql.escapeId;
     static format = mysql.format;
     static raw = mysql.raw;
-}
-
-export class PromiseMySQLPool {
-    private _pool: mysql.Pool;
-
-    constructor(pool: mysql.Pool) {
-        this._pool = pool;
-        this.on = pool.on.bind(this._pool);
-    }
-
-    query(query: mysql.Query | string | mysql.QueryOptions, values?: any): Promise<{
-        results: any;
-        fields: mysql.FieldInfo[];
-    }> {
-        let args: any[] = [];
-        for (let i = 0; i < arguments.length; ++i) {
-            args.push(arguments[i]);
-        }
-
-        return new Promise<{
-            results: any;
-            fields: mysql.FieldInfo[];
-        }>((rs, rj) => {
-            args.push((err: mysql.MysqlError | null, results: any, fields: mysql.FieldInfo[]) => {
-                if (err) {
-                    rj(err)
-                }
-                else {
-                    rs({
-                        results: results,
-                        fields: fields
-                    })
-                }
-            });
-
-            this._pool.query.apply(this._pool, args)
-        });
-    }
-
-    select: <T=any>(query: mysql.Query | string | mysql.QueryOptions, values?: any) => Promise<{
-        results: T[];
-        fields: mysql.FieldInfo[];
-    }> = this.query;
-    insert: (query: mysql.Query | string | mysql.QueryOptions, values?: any) => Promise<{
-        results: { affectedRows: number, insertId: number }
-    }> = this.query;
-    update: (query: mysql.Query | string | mysql.QueryOptions, values?: any) => Promise<{
-        results: { changedRows: number }
-    }> = this.query;
-    delete: (query: mysql.Query | string | mysql.QueryOptions, values?: any) => Promise<{
-        results: { affectedRows: number }
-    }> = this.query;
-
-    async end(): Promise<void> {
-        return new Promise<void>((rs, rj) => {
-            this._pool.end(err => {
-                if (err) {
-                    rj(err);
-                }
-                else {
-                    rs();
-                }
-            })
-        })
-    }
-
-    on: mysql.Pool['on'];
 }
