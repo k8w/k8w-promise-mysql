@@ -10,8 +10,4 @@ export default interface MyClusterConfig {
      * 从节点
      */
     slave?: Array<mysql.PoolConfig>;
-    /**
-     * 主节点是否用于读取
-     */
-    isMasterRead?: boolean;
 }

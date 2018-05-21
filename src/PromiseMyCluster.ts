@@ -15,12 +15,12 @@ export default class PromiseMyCluster {
      *               "master"：主节点，可以进行读写操作
      *               "slave"：从节点，只能进行读操作
      */
-    query(query: mysql.Query | string | mysql.QueryOptions, values?: any, option: string = 'master'): Promise<{
+    query(query: mysql.Query | string | mysql.QueryOptions, values?: any, option: 'all' | 'master' | 'slave' = 'master'): Promise<{
         results: any;
         fields: mysql.FieldInfo[];
     }> {
         let args: any[] = [];
-        for (let i = 0; i < arguments.length; ++i) {
+        for (let i = 0; i < 2; ++i) {
             args.push(arguments[i]);
         }
 

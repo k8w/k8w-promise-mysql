@@ -24,7 +24,6 @@ export default class PromiseMySQL {
                 poolCluster.add(`SLAVE${i+1}`, config.slave[i]);
             }
         }    
-        poolCluster.getConnection(function (err, connection) { });
         return new PromiseMyCluster(poolCluster);
     }
 
