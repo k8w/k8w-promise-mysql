@@ -34,7 +34,7 @@ export default class PromiseMySQLPool {
                 }
             });
 
-            this._pool.query.apply(this._pool, args)
+            this._pool.query.apply(this._pool, args as any)
         });
     }
 

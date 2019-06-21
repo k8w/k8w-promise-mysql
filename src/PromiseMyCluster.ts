@@ -53,7 +53,7 @@ export default class PromiseMyCluster {
                     pool = this._cluster.of('*', 'random');
                     break;
             }
-            pool.query.apply(pool, args);
+            pool.query.apply(pool, args as any);
         });
     }
 
